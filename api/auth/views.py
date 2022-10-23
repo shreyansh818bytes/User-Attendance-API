@@ -56,7 +56,7 @@ class Register(Resource):
 
         data = register_request_parser.parse_args()
 
-        # Add permissions check here
+        # Add role permissions check here
 
         try:
 

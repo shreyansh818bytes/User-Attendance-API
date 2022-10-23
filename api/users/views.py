@@ -17,7 +17,7 @@ user_model = users_namespace.model(
 )
 
 
-@users_namespace.route("/all/")
+@users_namespace.route("/all")
 class GetAllUsers(Resource):
     @users_namespace.marshal_with(user_model)
     @users_namespace.doc(description="Retrieve all users")
@@ -32,7 +32,7 @@ class GetAllUsers(Resource):
         return users, HTTPStatus.OK
 
 
-@users_namespace.route("/user/<int:user_id>/")
+@users_namespace.route("/user/<int:user_id>")
 class GetDeleteUserById(Resource):
     @users_namespace.marshal_with(user_model)
     @users_namespace.doc(
