@@ -1,5 +1,4 @@
 from flask_restx import Resource, Namespace, fields, reqparse
-from flask import request
 from api.models.user import User, UserRole
 from werkzeug.security import generate_password_hash, check_password_hash
 from http import HTTPStatus
