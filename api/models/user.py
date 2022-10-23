@@ -4,9 +4,9 @@ from api.utils.db import db
 
 
 class UserRole(Enum):
-    SECRETARY = 'secretary'
-    VOLUNTEER = 'volunteer'
-    MEMBER = 'member'
+    SECRETARY = "secretary"
+    VOLUNTEER = "volunteer"
+    MEMBER = "member"
 
 
 class User(db.Model):
@@ -29,3 +29,7 @@ class User(db.Model):
     @classmethod
     def get_by_id(cls, id):
         return cls.query.get_or_404(id)
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()

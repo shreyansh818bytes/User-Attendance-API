@@ -33,13 +33,10 @@ class GetAllUsers(Resource):
 
 
 @users_namespace.route("/user/<int:user_id>/")
-class GetUserById(Resource):
+class GetDeleteUserById(Resource):
     @users_namespace.marshal_with(user_model)
     @users_namespace.doc(
-        description="Retrieve a user by id",
-        params= {
-            "user_id": "User ID"
-        }
+        description="Retrieve a user by id", params={"user_id": "User ID"}
     )
     @jwt_required()
     def get(self, user_id):
@@ -47,6 +44,19 @@ class GetUserById(Resource):
         Get user by ID
         """
 
-        users = User.get_by_id(user_id)
+        user = User.get_by_id(user_id)
 
-        return users, HTTPStatus.OK
+        return user, HTTPStatus.OK
+
+    @users_namespace.doc(
+        description="Delete a user by id", params={"user_id": "User ID"}
+    )
+    @jwt_required()
+    def delete(self, user_id):
+        """
+        Delete user by ID
+        """
+
+        User.get_by_id(user_id).delete()
+
+        return {"message": "User deleted successfuly!"}, HTTPStatus.OK

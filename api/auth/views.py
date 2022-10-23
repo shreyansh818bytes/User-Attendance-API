@@ -19,7 +19,11 @@ register_request_parser.add_argument("email", type=str, help="Email of the user"
 register_request_parser.add_argument(
     "password", type=str, help="Password for user's account"
 )
-register_request_parser.add_argument("role", type=UserRole, help="Role of the new user")
+register_request_parser.add_argument(
+    "role",
+    type=UserRole,
+    help="Role of the new user. Existing Roles = ['SECRETARY', 'VOLUNTEER', 'MEMBER']",
+)
 
 
 user_model = auth_namespace.model(
@@ -44,12 +48,16 @@ login_request_parser.add_argument(
 class Register(Resource):
     @auth_namespace.expect(register_request_parser, validate=True)
     @auth_namespace.marshal_with(user_model)
+    @jwt_required()
     def post(self):
         """
-        Create a new user account
+        Register new user
         """
 
         data = register_request_parser.parse_args()
+
+        # Add permissions check here
+
         try:
 
             new_user = User(
@@ -98,6 +106,9 @@ class Login(Resource):
 class Refresh(Resource):
     @jwt_required(refresh=True)
     def post(self):
+        """
+        Refresh access token
+        """
         email = get_jwt_identity()
 
         access_token = create_access_token(identity=email)

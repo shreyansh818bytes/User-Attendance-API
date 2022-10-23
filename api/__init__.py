@@ -4,9 +4,10 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
 from api.auth.views import auth_namespace
+from api.models.absentee import Absentee
+from api.models.user import User
 from api.users.views import users_namespace
 from api.config.config import config_dict
-from api.models.user import User
 from api.utils.db import db
 
 
@@ -46,6 +47,7 @@ def create_app(config=config_dict["dev"]):
         return {
             "db": db,
             "User": User,
+            "Absentee": Absentee,
         }
 
     return app
