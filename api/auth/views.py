@@ -34,13 +34,10 @@ user_model = auth_namespace.model(
     },
 )
 
-
-login_model = auth_namespace.model(
-    "Login",
-    {
-        "email": fields.String(required=True, description="An email"),
-        "password": fields.String(required=True, description="A password"),
-    },
+login_request_parser = reqparse.RequestParser()
+login_request_parser.add_argument("email", type=str, help="Email linked User account")
+login_request_parser.add_argument(
+    "password", type=str, help="Password set for user login"
 )
 
 
@@ -54,7 +51,6 @@ class Register(Resource):
         """
 
         data = register_request_parser.parse_args()
-        print(data)
         try:
 
             new_user = User(
@@ -69,20 +65,19 @@ class Register(Resource):
             return new_user, HTTPStatus.CREATED
 
         except Exception as e:
-            print(e)
             raise Conflict(f"User with email {data.get('email')} exists")
 
 
 @auth_namespace.route("/login")
 class Login(Resource):
-    @auth_namespace.expect(login_model)
+    @auth_namespace.expect(login_request_parser)
     def post(self):
         """
         Generate a JWT
 
         """
 
-        data = request.get_json()
+        data = login_request_parser.parse_args()
 
         email = data.get("email")
         password = data.get("password")
@@ -90,22 +85,22 @@ class Login(Resource):
         user = User.query.filter_by(email=email).first()
 
         if (user is not None) and check_password_hash(user.password_hash, password):
-            access_token = create_access_token(identity=user.username)
-            refresh_token = create_refresh_token(identity=user.username)
+            access_token = create_access_token(identity=user.email)
+            refresh_token = create_refresh_token(identity=user.email)
 
             response = {"acccess_token": access_token, "refresh_token": refresh_token}
 
             return response, HTTPStatus.OK
 
-        raise BadRequest("Invalid Username or password")
+        raise BadRequest("Invalid email or password")
 
 
 @auth_namespace.route("/refresh")
 class Refresh(Resource):
     @jwt_required(refresh=True)
     def post(self):
-        username = get_jwt_identity()
+        email = get_jwt_identity()
 
-        access_token = create_access_token(identity=username)
+        access_token = create_access_token(identity=email)
 
         return {"access_token": access_token}, HTTPStatus.OK
