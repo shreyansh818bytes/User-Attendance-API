@@ -3,7 +3,7 @@ from .. import create_app
 from ..config.config import config_dict
 from ..utils.db import db
 from werkzeug.security import generate_password_hash
-from ..models.users import User
+from ..models.user import User
 
 
 class UserTestCase(unittest.TestCase):

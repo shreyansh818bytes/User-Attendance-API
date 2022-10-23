@@ -5,6 +5,7 @@ click==8.0.3
 Flask==2.0.2
 Flask-JWT-Extended==4.3.1
 Flask-Migrate==3.1.0
+Flask-RESTful==0.3.9
 flask-restx==0.5.1
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.2
@@ -26,7 +27,7 @@ PyMySQL==1.0.2
 pyparsing==3.0.6
 pyrsistent==0.18.0
 pytest==6.2.5
-python-decouple==3.5
+python-decouple==3.6
 pytz==2021.3
 six==1.16.0
 SQLAlchemy==1.4.27
