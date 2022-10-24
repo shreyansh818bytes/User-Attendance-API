@@ -6,6 +6,7 @@ from http import HTTPStatus
 from flask_jwt_extended import jwt_required
 from werkzeug.exceptions import BadRequest, Conflict
 from api.utils.helpers import toDate
+from api.attendance.helpers import absentee_model_mapper
 
 attendance_namespace = Namespace("attendance", description="Attendance Namespace")
 
@@ -56,14 +57,7 @@ class AddAbsenteeRecord(Resource):
 
             new_absentee.save()
 
-            return {
-                "user_id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "is_active": user.is_active,
-                "role": user.role,
-                "absent_date": new_absentee.absent_date,
-            }, HTTPStatus.CREATED
+            return absentee_model_mapper(new_absentee, user), HTTPStatus.CREATED
 
         except Exception as e:
             raise Conflict(description=f"Absentee record already exists.")
@@ -119,46 +113,14 @@ class GetAbsenteeRecord(Resource):
                 .all()
             )
             if absents:
-                absents = [
-                    {
-                        "user_id": absent.id,
-                        "name": user.name,
-                        "email": user.email,
-                        "is_active": user.is_active,
-                        "role": user.role,
-                        "absent_date": absent.absent_date,
-                    }
-                    for absent in absents
-                ]
+                absents = [absentee_model_mapper(absent, user) for absent in absents]
             else:
-                absents = {
-                    "user_id": user.id,
-                    "name": user.name,
-                    "email": user.email,
-                    "is_active": user.is_active,
-                    "role": user.role,
-                }
+                # If end_date is not None, return a list
+                absents = [absentee_model_mapper(user_record=user)]
             return absents, HTTPStatus.OK
 
         absentee = Absentee.query.filter_by(
             user_id=user_id, absent_date=start_date
         ).first()
 
-        if not absentee:
-            absentee = {
-                "user_id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "is_active": user.is_active,
-                "role": user.role,
-            }
-        else:
-            absentee = {
-                "user_id": absentee.user_id,
-                "name": user.name,
-                "email": user.email,
-                "is_active": user.is_active,
-                "role": user.role,
-                "absent_date": absentee.absent_date,
-            }
-        return absentee, HTTPStatus.OK
+        return absentee_model_mapper(absentee, user), HTTPStatus.OK
