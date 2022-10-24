@@ -1,0 +1,18 @@
+version: '3.10'
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - '5000:5000'
+    environment:
+      - ENV=dev
+      - FLASK_APP=api/
+      - FLASK_DEBUG=1
+      - SECRET_KEY=Secret
+      - JWT_SECRET_KEY=secrete_jwt_toke_or_key_samething
+      - DB_USERNAME=admin
+      - DB_PASSWORD=password
+      - DB_HOSTNAME=localhost:5433
+      - DB_NAME=user_attendance_db

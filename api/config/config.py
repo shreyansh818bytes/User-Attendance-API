@@ -1,7 +1,7 @@
 import os
-from decouple import config
 from datetime import timedelta
 
+from decouple import config
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -20,7 +20,9 @@ class Config:
     DB_PASSWORD = config("DB_PASSWORD")
     DB_HOSTNAME = config("DB_HOSTNAME")
     DB_NAME = config("DB_NAME")
-    SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}/{DB_NAME}"
+    SQLALCHEMY_DATABASE_URI = (
+        f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}/{DB_NAME}"
+    )
 
 
 class DevConfig(Config):
@@ -35,9 +37,4 @@ class TestConfig(Config):
     SQLALCHEMY_ECHO = True
 
 
-class ProdConfig(Config):
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DEBUG = False
-
-
-config_dict = {"dev": DevConfig, "testing": TestConfig, "production": ProdConfig}
+config_dict = {"dev": DevConfig, "testing": TestConfig}
