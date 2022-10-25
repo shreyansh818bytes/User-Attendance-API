@@ -1,8 +1,8 @@
-from api.models.user import User
 from api.models.absentee import Absentee
+from api.models.user import User
 
 
-def absentee_model_mapper(absentee_record: Absentee, user_record: User):
+def absentee_model_mapper(absentee_record: Absentee = None, user_record: User = None):
     absentee = {
         "user_id": None,
         "name": None,
