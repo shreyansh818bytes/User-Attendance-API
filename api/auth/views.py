@@ -24,7 +24,7 @@ register_request_parser.add_argument(
 register_request_parser.add_argument(
     "role",
     type=UserRole,
-    help="Role of the new user. Existing Roles = ['SECRETARY', 'VOLUNTEER', 'MEMBER']",
+    help="Role of the new user. Existing Roles = ['secretary', 'volunteer', 'member']",
 )
 
 

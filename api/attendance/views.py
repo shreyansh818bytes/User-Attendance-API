@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask_jwt_extended import jwt_required
 from flask_restx import Namespace, Resource, fields, reqparse
-from werkzeug.exceptions import BadRequest, Conflict
+from werkzeug.exceptions import BadRequest, Conflict, NotFound
 
 from api.attendance.helpers import absentee_model_mapper
 from api.models.absentee import Absentee
@@ -44,18 +44,24 @@ absent_request_parser.add_argument("absent_date")
 class AddAbsenteeRecord(Resource):
     @attendance_namespace.marshal_with(user_attendance_model)
     @attendance_namespace.doc(description="Add an absentee record for a user")
+    @attendance_namespace.expect(absent_request_parser)
     @jwt_required()
     def post(self, user_id):
         """
         Add absentee record
         """
         # Add role permission check here
-        todays_date = date.today()
+        absent_date = absent_request_parser.parse_args().get("absent_date")
+        if absent_date:
+            absent_date = toDate(absent_date)
+        else:
+            absent_date = date.today()
+
+        user = User.get_by_id(user_id)
 
         try:
-            user = User.get_by_id(user_id)
 
-            new_absentee = Absentee(user_id=user.id, absent_date=todays_date)
+            new_absentee = Absentee(user_id=user.id, absent_date=absent_date)
 
             new_absentee.save()
 
@@ -75,9 +81,16 @@ class AddAbsenteeRecord(Resource):
         Delete absentee record
         """
         absent_date = absent_request_parser.parse_args().get("absent_date")
-        Absentee.query.filter_by(
+        absentee_record = Absentee.query.filter_by(
             user_id=user_id, absent_date=absent_date
-        ).first().delete()
+        ).first()
+
+        if not absentee_record:
+            raise NotFound(
+                f"User or absent record for user on this date does not exist!"
+            )
+
+        absentee_record.delete()
 
         return {"message": "Absentee record deleted successfuly!"}, HTTPStatus.OK
 
