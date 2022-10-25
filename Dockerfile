@@ -13,6 +13,9 @@ RUN pip install -r requirements.txt
 # Copy the code
 COPY . /app
 
+# Import PORT from env vars
+ARG PORT
+ENV PORT=${PORT}
+
 # Configure the container to run in an executed manner
-ENTRYPOINT ["waitress-serve"]
-CMD ["--host", "0.0.0.0", "--port", "5000", "--call", "api:create_app"]
+CMD waitress-serve --host 0.0.0.0 --port ${PORT} --call api:create_app

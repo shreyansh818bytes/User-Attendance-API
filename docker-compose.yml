@@ -5,8 +5,9 @@ services:
     volumes:
       - .:/app
     ports:
-      - '5000:5000'
+      - '5000:8080'
     environment:
+      - PORT=8080
       - ENV=dev
       - FLASK_APP=api/
       - FLASK_DEBUG=1
