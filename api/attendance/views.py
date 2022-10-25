@@ -1,12 +1,14 @@
 from datetime import date
-from flask_restx import Resource, Namespace, fields, reqparse
-from api.models.user import User
-from api.models.absentee import Absentee
 from http import HTTPStatus
+
 from flask_jwt_extended import jwt_required
+from flask_restx import Namespace, Resource, fields, reqparse
 from werkzeug.exceptions import BadRequest, Conflict
-from api.utils.helpers import toDate
+
 from api.attendance.helpers import absentee_model_mapper
+from api.models.absentee import Absentee
+from api.models.user import User
+from api.utils.helpers import toDate
 
 attendance_namespace = Namespace("attendance", description="Attendance Namespace")
 
@@ -59,7 +61,7 @@ class AddAbsenteeRecord(Resource):
 
             return absentee_model_mapper(new_absentee, user), HTTPStatus.CREATED
 
-        except Exception as e:
+        except Exception:
             raise Conflict(description=f"Absentee record already exists.")
 
     @attendance_namespace.expect(absent_request_parser, validate=True)

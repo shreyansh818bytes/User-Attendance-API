@@ -1,14 +1,16 @@
-from flask_restx import Resource, Namespace, fields, reqparse
-from api.models.user import User, UserRole
-from werkzeug.security import generate_password_hash, check_password_hash
 from http import HTTPStatus
+
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
-    jwt_required,
     get_jwt_identity,
+    jwt_required,
 )
-from werkzeug.exceptions import Conflict, BadRequest
+from flask_restx import Namespace, Resource, fields, reqparse
+from werkzeug.exceptions import BadRequest, Conflict
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from api.models.user import User, UserRole
 
 auth_namespace = Namespace("auth", description="Authentication Namespace")
 
@@ -71,7 +73,7 @@ class Register(Resource):
 
             return new_user, HTTPStatus.CREATED
 
-        except Exception as e:
+        except Exception:
             raise Conflict(f"User with email {data.get('email')} exists")
 
 
